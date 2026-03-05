@@ -62,6 +62,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{karyawan}/edit', [KaryawanController::class, 'edit'])->name('karyawan.edit');
         Route::put('/{karyawan}', [KaryawanController::class, 'update'])->name('karyawan.update');
     });
+    
+    Route::resource('leaves', \App\Http\Controllers\LeaveController::class)->only([
+        'index',    // daftar cuti (GET /leaves)
+        'create',   // form ajukan (GET /leaves/create)
+        'store',    // simpan pengajuan (POST /leaves)
+        'show',     // detail cuti (GET /leaves/{id}) - opsional
+    ]);
+
+    // Route khusus approve/reject (hanya HSD)
+    Route::patch('leaves/{leave}/status', [\App\Http\Controllers\LeaveController::class, 'updateStatus'])
+         ->name('leaves.updateStatus')
+         ->middleware('role:hsd');
 });
 
 /*

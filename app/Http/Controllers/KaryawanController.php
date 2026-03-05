@@ -11,11 +11,24 @@ class KaryawanController extends Controller
 {
     public function index()
     {
-        if (!in_array(auth()->user()->role, ['admin', 'hsd'])) {
-            abort(403, 'Anda tidak memiliki akses.');
+        $user = Auth::user();
+    
+        if ($user->isKaryawan()) {
+            // Karyawan biasa hanya melihat data dirinya sendiri
+            $karyawan = Karyawan::where('email', $user->email)->first();
+    
+            if (!$karyawan) {
+                return view('karyawan.index', ['karyawans' => collect([])])
+                    ->with('error', 'Data karyawan Anda tidak ditemukan. Hubungi HSD.');
+            }
+    
+            $karyawans = collect([$karyawan]);
+        } 
+        else {
+            // Admin, HSD, dan Pimpinan bisa melihat semua data
+            $karyawans = Karyawan::latest()->get();
         }
-        
-        $karyawans = Karyawan::all();
+    
         return view('karyawan.index', compact('karyawans'));
     }
     public function exportExcel()

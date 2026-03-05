@@ -49,7 +49,7 @@ class User extends Authenticatable
     // Relasi ke table karyawans (asumsi model Karyawan sudah ada)
     public function karyawan()
     {
-        return $this->hasOne(Karyawan::class);
+        return $this->hasOne(Karyawan::class, 'nik', 'nik'); // foreign key di karyawans: nik, local key di users: nik
     }
 
     // Helper untuk cek role (mudah dipakai di blade, controller, middleware)

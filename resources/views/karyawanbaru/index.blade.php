@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1 class="text-white text-center mb-4 h1 bg-gray-800 p-4" style="font-family: Inter; font-weight: bold;">
+<h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
     DAFTAR KARYAWAN BARU
 </h1>
 <div class="container">
