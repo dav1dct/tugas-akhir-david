@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\KaryawanBaru;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -20,12 +22,61 @@ class KaryawanBaruController extends Controller
         return view('karyawanbaru.index', compact('karyawanbarus'));
     }
 
-    public function exportExcel()
+    public function export()
     {
-        if (!in_array(auth()->user()->role, ['admin', 'hsd'])) {
-            abort(403, 'Anda tidak memiliki akses.');
+        $data = KaryawanBaru::all();
+    
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        // Header Excel
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Kode Lamaran');
+        $sheet->setCellValue('C1', 'Nama Lengkap');
+        $sheet->setCellValue('D1', 'Email');
+        $sheet->setCellValue('E1', 'No HP');
+        $sheet->setCellValue('F1', 'Tanggal Lahir');
+        $sheet->setCellValue('G1', 'Pendidikan');
+        $sheet->setCellValue('H1', 'Gender');
+        $sheet->setCellValue('I1', 'Alamat');
+        $sheet->setCellValue('J1', 'Status');
+        $sheet->setCellValue('K1', 'Surat Lamaran');
+        $sheet->setCellValue('L1', 'Foto Identitas');
+        $sheet->setCellValue('M1', 'CV');
+        $sheet->setCellValue('N1', 'Ijazah');
+    
+        $row = 2;
+        $no = 1;
+    
+        foreach ($data as $k) {
+    
+            $sheet->setCellValue('A'.$row, $no++);
+            $sheet->setCellValue('B'.$row, $k->kode_lamaran);
+            $sheet->setCellValue('C'.$row, $k->nama_lengkap);
+            $sheet->setCellValue('D'.$row, $k->email);
+            $sheet->setCellValue('E'.$row, $k->no_hp);
+            $sheet->setCellValue('F'.$row, $k->tanggal_lahir);
+            $sheet->setCellValue('G'.$row, $k->pendidikan);
+            $sheet->setCellValue('H'.$row, $k->gender);
+            $sheet->setCellValue('I'.$row, $k->alamat);
+            $sheet->setCellValue('J'.$row, $k->status);
+            $sheet->setCellValue('K'.$row, $k->surat_lamaran);
+            $sheet->setCellValue('L'.$row, $k->foto_identitas);
+            $sheet->setCellValue('M'.$row, $k->cv);
+            $sheet->setCellValue('N'.$row, $k->ijazah);
+    
+            $row++;
         }
-        return Excel::download(new KaryawanBaruExport, 'karyawan_baru.xlsx');
+    
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'data_karyawan_baru.xlsx';
+    
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+    
+        $writer->save('php://output');
+        exit;
     }
 
     public function create()

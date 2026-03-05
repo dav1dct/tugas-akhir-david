@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Karyawan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Exports\KaryawanExport;
-use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Carbon\Carbon;
 
 class KaryawanController extends Controller
 {
@@ -32,14 +33,86 @@ class KaryawanController extends Controller
     
         return view('karyawan.index', compact('karyawans'));
     }
-    public function exportExcel()
+    public function export()
     {
-        if (!in_array(auth()->user()->role, ['admin', 'hsd'])) {
-            abort(403, 'Anda tidak memiliki akses.');
+        $karyawans = Karyawan::all();
+    
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        // Header
+        $headers = [
+            'No',
+            'NIK',
+            'Nama',
+            'Email',
+            'No HP',
+            'Alamat',
+            'Tanggal Lahir',
+            'Pendidikan',
+            'Posisi',
+            'Departemen',
+            'Status Kerja',
+            'Status Pernikahan',
+            'No Rekening',
+            'Status',
+            'Tanggal Masuk',
+            'Tanggal Keluar'
+        ];
+    
+        $col = 'A';
+        foreach ($headers as $header) {
+            $sheet->setCellValue($col.'1', $header);
+            $sheet->getStyle($col.'1')->getFont()->setBold(true);
+            $col++;
         }
     
-        return Excel::download(new KaryawanExport, 'karyawan.xlsx');
+        $row = 2;
+        $no = 1;
+    
+        foreach ($karyawans as $k) {
+    
+            $sheet->setCellValue('A'.$row, $no++);
+            $sheet->setCellValue('B'.$row, $k->nik);
+            $sheet->setCellValue('C'.$row, $k->nama_lengkap);
+            $sheet->setCellValue('D'.$row, $k->email);
+            $sheet->setCellValue('E'.$row, $k->no_hp);
+            $sheet->setCellValue('F'.$row, $k->alamat);
+            $sheet->setCellValue('G'.$row, Carbon::parse($k->tanggal_lahir)->format('d-m-Y'));
+            $sheet->setCellValue('H'.$row, $k->pendidikan);
+            $sheet->setCellValue('I'.$row, $k->posisi);
+            $sheet->setCellValue('J'.$row, $k->departemen);
+            $sheet->setCellValue('K'.$row, $k->status_kerja);
+            $sheet->setCellValue('L'.$row, $k->status_pernikahan);
+            $sheet->setCellValue('M'.$row, $k->no_rekening);
+            $sheet->setCellValue('N'.$row, $k->status);
+            $sheet->setCellValue('O'.$row, Carbon::parse($k->tanggal_masuk)->format('d-m-Y'));
+    
+            if($k->tanggal_keluar){
+                $sheet->setCellValue('P'.$row, Carbon::parse($k->tanggal_keluar)->format('d-m-Y'));
+            } else {
+                $sheet->setCellValue('P'.$row, '-');
+            }
+    
+            $row++;
+        }
+    
+        // Auto width
+        foreach(range('A','P') as $columnID){
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+    
+        $writer = new Xlsx($spreadsheet);
+    
+        $filename = 'data_karyawan.xlsx';
+    
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+    
+        $writer->save('php://output');
     }
+
     public function create()
     {
         if (auth()->user()->role !== 'hsd') {

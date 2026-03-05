@@ -17,18 +17,21 @@
                             {{ __('Dashboard') }}
                         </x-nav-link>
 
-                        <!-- Menu Cuti - untuk semua role -->
                         <x-nav-link :href="route('leaves.index')" :active="request()->routeIs('leaves.index')">
                             {{ __('Cuti') }}
                         </x-nav-link>
 
-                        <!-- Menu Karyawan - untuk SEMUA role yang login -->
+                        <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
+                            {{ __('Absensi') }}
+                        </x-nav-link>
+
+                        <!-- Menu Karyawan - untuk semua role -->
                         <x-nav-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.index')">
                             {{ __('Karyawan') }}
                         </x-nav-link>
 
-                        <!-- Menu Karyawan Baru - hanya Admin & HSD -->
-                        @if(in_array(auth()->user()->role, ['admin', 'hsd']))
+                        <!-- Menu Karyawan Baru - sekarang untuk Admin, HSD, DAN Pimpinan -->
+                        @if(in_array(auth()->user()->role, ['admin', 'hsd', 'pimpinan']))
                             <x-nav-link :href="route('karyawanbaru.index')" :active="request()->routeIs('karyawanbaru.index')">
                                 {{ __('Karyawan Baru') }}
                             </x-nav-link>
@@ -37,7 +40,7 @@
                 @endauth
             </div>
 
-            <!-- Settings Dropdown -->
+            <!-- Settings Dropdown (Desktop) -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -62,7 +65,7 @@
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger Menu -->
+            <!-- Hamburger (Mobile) -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-500 hover:text-gray-400 dark:hover:text-gray-400 hover:bg-gray-900 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-900 dark:focus:bg-gray-900 focus:text-gray-400 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -85,18 +88,22 @@
                 {{ __('Cuti') }}
             </x-responsive-nav-link>
 
+            <x-responsive-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
+                {{ __('Absensi') }}
+            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.index')">
                 {{ __('Karyawan') }}
             </x-responsive-nav-link>
 
-            @if(in_array(auth()->user()->role, ['admin', 'hsd']))
+            @if(in_array(auth()->user()->role, ['admin', 'hsd', 'pimpinan']))
                 <x-responsive-nav-link :href="route('karyawanbaru.index')" :active="request()->routeIs('karyawanbaru.index')">
                     {{ __('Karyawan Baru') }}
                 </x-responsive-nav-link>
             @endif
         </div>
 
-        <!-- Settings Mobile -->
+        <!-- Responsive Settings -->
         <div class="pt-4 pb-1 border-t border-gray-600 dark:border-gray-600">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-200">{{ Auth::user()->name }}</div>

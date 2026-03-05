@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
     // Karyawan Baru
     Route::prefix('karyawanbaru')->group(function () {
         Route::get('/', [KaryawanBaruController::class, 'index'])->name('karyawanbaru.index');
-        Route::get('/export', [KaryawanBaruController::class, 'exportExcel'])->name('karyawanbaru.export');
+        Route::get('/export', [KaryawanBaruController::class, 'export'])->name('karyawanbaru.export');
         Route::put('/{id}/status', [KaryawanBaruController::class, 'updateStatus'])->name('karyawanbaru.updateStatus');
         Route::get('/{id}/edit', [KaryawanBaruController::class, 'edit'])->name('karyawanbaru.edit');
         Route::get('/download/{id}/{file}', [KaryawanBaruController::class, 'download'])->name('karyawanbaru.download');
@@ -56,7 +56,7 @@ Route::middleware(['auth'])->group(function () {
     // Karyawan
     Route::prefix('karyawan')->group(function () {
         Route::get('/', [KaryawanController::class, 'index'])->name('karyawan.index');
-        Route::get('/export', [KaryawanController::class, 'exportExcel'])->name('karyawan.export');
+        Route::get('/export', [KaryawanController::class, 'export'])->name('karyawan.export');
         Route::get('/tambah', [KaryawanController::class, 'create'])->name('karyawan.create');
         Route::post('/', [KaryawanController::class, 'store'])->name('karyawan.store');
         Route::get('/{karyawan}/edit', [KaryawanController::class, 'edit'])->name('karyawan.edit');
@@ -74,6 +74,22 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('leaves/{leave}/status', [\App\Http\Controllers\LeaveController::class, 'updateStatus'])
          ->name('leaves.updateStatus')
          ->middleware('role:hsd');
+
+    // ====================== ABSENSI ======================
+
+    // Menampilkan data absensi
+    Route::get('/attendances', [\App\Http\Controllers\AttendanceController::class, 'index'])
+        ->name('attendances.index');
+
+    // Form import excel
+    Route::get('/attendances/import', [\App\Http\Controllers\AttendanceController::class, 'importForm'])
+        ->name('attendances.importForm')
+        ->middleware('role:hsd');
+
+    // Proses upload dan import excel
+    Route::post('/attendances/import', [\App\Http\Controllers\AttendanceController::class, 'import'])
+        ->name('attendances.import')
+        ->middleware('role:hsd');
 });
 
 /*
