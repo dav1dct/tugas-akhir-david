@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Exports\KaryawanExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -22,7 +23,7 @@ class KaryawanController extends Controller
                     ->with('error', 'Data karyawan Anda tidak ditemukan. Hubungi HSD.');
             }
     
-            $karyawans = collect([$karyawan]);
+            $karyawans = collect([$karyawan]);   // hanya 1 data
         } 
         else {
             // Admin, HSD, dan Pimpinan bisa melihat semua data

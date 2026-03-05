@@ -8,6 +8,15 @@
             {{ session('success') }}
         </div>
     @endif
+
+    <!-- Pesan khusus untuk karyawan biasa -->
+    @if(auth()->user()->isKaryawan())
+    <div class="alert alert-info mb-3">
+        <i class="fas fa-info-circle"></i> 
+        <strong>Ini adalah data Anda.</strong>
+    </div>
+    @endif
+
     @if(auth()->user()->role === 'hsd')
     <a href="{{ route('karyawan.create') }}" class="btn btn-primary mb-3">Tambah Karyawan</a>
     @endif
