@@ -21,10 +21,12 @@
                             {{ __('Cuti') }}
                         </x-nav-link>
 
+                        @if(in_array(auth()->user()->role, ['admin', 'hsd', 'pimpinan']))
                         <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
                             {{ __('Absensi') }}
                         </x-nav-link>
-
+                        @endif
+                        
                         <!-- Menu Karyawan - untuk semua role -->
                         <x-nav-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.index')">
                             {{ __('Karyawan') }}
@@ -88,9 +90,11 @@
                 {{ __('Cuti') }}
             </x-responsive-nav-link>
 
+            @if(in_array(auth()->user()->role, ['admin', 'hsd', 'pimpinan']))
             <x-responsive-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
                 {{ __('Absensi') }}
             </x-responsive-nav-link>
+            @endif
 
             <x-responsive-nav-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.index')">
                 {{ __('Karyawan') }}

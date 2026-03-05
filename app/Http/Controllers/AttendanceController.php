@@ -16,13 +16,6 @@ class AttendanceController extends Controller
     {
         $query = Attendance::with('karyawan')->latest('date');
 
-        if (Auth::user()->isKaryawan()) {
-            $karyawan = Karyawan::where('email', Auth::user()->email)->first();
-            if ($karyawan) {
-                $query->where('karyawan_id', $karyawan->id);
-            }
-        }
-
         $attendances = $query->get();
 
         return view('attendances.index', compact('attendances'));

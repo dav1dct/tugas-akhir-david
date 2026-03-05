@@ -74,22 +74,20 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('leaves/{leave}/status', [\App\Http\Controllers\LeaveController::class, 'updateStatus'])
          ->name('leaves.updateStatus')
          ->middleware('role:hsd');
+});
 
-    // ====================== ABSENSI ======================
+// ====================== ABSENSI ======================
+    Route::middleware(['role:admin,hsd,pemimpin'])->group(function () {
 
-    // Menampilkan data absensi
-    Route::get('/attendances', [\App\Http\Controllers\AttendanceController::class, 'index'])
-        ->name('attendances.index');
+    Route::resource('attendances', \App\Http\Controllers\AttendanceController::class)
+        ->only(['index']);
 
-    // Form import excel
-    Route::get('/attendances/import', [\App\Http\Controllers\AttendanceController::class, 'importForm'])
-        ->name('attendances.importForm')
-        ->middleware('role:hsd');
+    Route::get('attendances/import', [\App\Http\Controllers\AttendanceController::class, 'importForm'])
+        ->name('attendances.importForm');
 
-    // Proses upload dan import excel
-    Route::post('/attendances/import', [\App\Http\Controllers\AttendanceController::class, 'import'])
-        ->name('attendances.import')
-        ->middleware('role:hsd');
+    Route::post('attendances/import', [\App\Http\Controllers\AttendanceController::class, 'import'])
+        ->name('attendances.import');
+
 });
 
 /*
