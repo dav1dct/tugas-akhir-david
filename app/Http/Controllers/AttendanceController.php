@@ -12,11 +12,26 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $query = Attendance::with('karyawan')->latest('date');
+        $query = Attendance::query();
 
-        $attendances = $query->get();
+        // Filter NIK
+        if ($request->nik) {
+            $query->where('nik', 'like', '%' . $request->nik . '%');
+        }
+
+        // Filter Nama
+        if ($request->nama) {
+            $query->where('nama', 'like', '%' . $request->nama . '%');
+        }
+
+        // Filter Tanggal
+        if ($request->start_date && $request->end_date) {
+            $query->whereBetween('date', [$request->start_date, $request->end_date]);
+        }
+
+        $attendances = $query->orderBy('date','desc')->get();
 
         return view('attendances.index', compact('attendances'));
     }

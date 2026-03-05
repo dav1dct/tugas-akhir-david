@@ -4,7 +4,49 @@
 <h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
     DAFTAR ABSENSI
 </h1>
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" action="{{ route('attendances.index') }}">
+            <div class="row">
 
+                <div class="col-md-3">
+                    <label>NIK</label>
+                    <input type="text" name="nik" class="form-control"
+                        value="{{ request('nik') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Nama</label>
+                    <input type="text" name="nama" class="form-control"
+                        value="{{ request('nama') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <label>Dari Tanggal</label>
+                    <input type="date" name="start_date" class="form-control"
+                        value="{{ request('start_date') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <label>Sampai Tanggal</label>
+                    <input type="date" name="end_date" class="form-control"
+                        value="{{ request('end_date') }}">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary me-2">
+                        Filter
+                    </button>
+
+                    <a href="{{ route('attendances.index') }}" class="btn btn-secondary">
+                        Reset
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
 <div class="container">
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
