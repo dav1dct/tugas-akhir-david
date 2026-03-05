@@ -30,24 +30,32 @@
                     <img src="{{ asset('assets/img/logoFull.png') }}" alt="Logo PT Citra Satria Utama" class="w-16 h-16">
                 </div>
                 <div class="flex items-center gap-4">
-                    @if (Route::has('login'))
-                        <nav class="flex flex-row items-center gap-2">
-                            @auth
-                                <a href="{{ url('/dashboard') }}" class="inline-flex items-center justify-center px-2 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#EDEDEC] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
-                                    Dashboard
+                @if (Route::has('login'))
+                    <nav class="flex flex-row items-center gap-2">
+                        @auth
+                            <!-- Sudah login -->
+                            <a href="{{ url('/dashboard') }}" class="inline-flex items-center justify-center px-2 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#EDEDEC] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
+                                Dashboard
+                            </a>
+
+                            <!-- Tombol Register HANYA muncul kalau sudah login SEBAGAI ADMIN -->
+                            @if (auth()->user()->isAdmin())
+                                <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-2 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#EDEDEC] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
+                                    Tambah User Baru
                                 </a>
-                            @else
-                                <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-2 py-1.5 dark:text-[#EDEDEC] text-[#EDEDEC] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal">
-                                    Log in
-                                </a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-2 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#EDEDEC] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
-                                        Register
-                                    </a>
-                                @endif
-                            @endauth
-                        </nav>
-                    @endif
+                            @endif
+
+                        @else
+                            <!-- Belum login (guest) -->
+                            <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-2 py-1.5 dark:text-[#EDEDEC] text-[#EDEDEC] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal">
+                                Log in (Hanya untuk karyawan PT Citra Satria Utama)
+                            </a>
+
+                            <!-- Tombol Register disembunyikan sepenuhnya untuk guest -->
+                            <!-- @if (Route::has('register')) ... @endif  --> <!-- Komentari atau hapus -->
+                        @endauth
+                    </nav>
+                @endif
                 </div>
             </div>
         </header>
