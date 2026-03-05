@@ -1,0 +1,1 @@
+<img src="{{ asset('assets/img/logosmall.png') }}" alt="Logo CSU" class="w-full h-full object-contain" />
