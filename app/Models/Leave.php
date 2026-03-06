@@ -13,13 +13,18 @@ class Leave extends Model
         'karyawan_id',
         'start_date',
         'end_date',
-        'jenis_cuti',
+        'jenis_cuti_id',
         'alasan',
         'status',
         'approved_by',
         'approved_at',
         'catatan_penolakan',
     ];
+
+    public function jenisCuti()
+    {
+        return $this->belongsTo(JenisCuti::class, 'jenis_cuti_id');
+    }
 
     public function karyawan()
     {

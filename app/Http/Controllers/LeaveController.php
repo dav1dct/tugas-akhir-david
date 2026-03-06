@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leave;
+use App\Models\JenisCuti;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,12 +12,12 @@ use Illuminate\Support\Facades\Redirect;
 class LeaveController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource (semua role bisa lihat).
      */
     public function index()
     {
         $query = Leave::with('karyawan', 'approver')->latest();
-    
+
         // Kalau karyawan, filter berdasarkan email
         if (Auth::user()->isKaryawan()) {
             $karyawan = Karyawan::where('email', Auth::user()->email)->first();
@@ -24,17 +25,18 @@ class LeaveController extends Controller
                 $query->where('karyawan_id', $karyawan->id);
             } else {
                 $leaves = collect([]);
-                return view('leaves.index', compact('leaves'));
+                return view('leaves.index', compact('leaves'))
+                    ->with('error', 'Data karyawan Anda tidak ditemukan. Hubungi HSD.');
             }
         }
-    
+
         $leaves = $query->get();
-    
+
         return view('leaves.index', compact('leaves'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource (hanya karyawan).
      */
     public function create()
     {
@@ -43,13 +45,14 @@ class LeaveController extends Controller
             abort(403, 'Hanya karyawan yang dapat mengajukan cuti.');
         }
 
-        $karyawan = Auth::user()->karyawan; // Data karyawan yang login
+        // Cari data karyawan untuk info tambahan di form (opsional)
+        $karyawan = Karyawan::where('email', Auth::user()->email)->first();
 
         return view('leaves.create', compact('karyawan'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage (hanya karyawan).
      */
     public function store(Request $request)
     {
@@ -58,34 +61,55 @@ class LeaveController extends Controller
         }
     
         $request->validate([
-            'start_date'   => 'required|date',
-            'end_date'     => 'required|date|after_or_equal:start_date',
-            'jenis_cuti'   => 'required|in:tahunan,sakit,bersalin,penting,lainnya',
-            'alasan'       => 'nullable|string|max:500',
+            'start_date'     => 'required|date',
+            'end_date'       => 'required|date|after_or_equal:start_date',
+            'jenis_cuti_id'  => 'required|exists:jenis_cutis,id',
+            'alasan'         => 'nullable|string|max:500',
         ]);
+    
+        $jenisCuti = JenisCuti::find($request->jenis_cuti_id);
+    
+        // Validasi durasi maksimal kalau ada
+        if ($jenisCuti && $jenisCuti->durasi_maks) {
+            $durasi = \Carbon\Carbon::parse($request->start_date)->diffInDays(\Carbon\Carbon::parse($request->end_date)) + 1;
+            if ($durasi > $jenisCuti->durasi_maks) {
+                return redirect()->back()
+                                 ->withInput()
+                                 ->withErrors(['end_date' => "Durasi cuti melebihi batas maksimal {$jenisCuti->durasi_maks} hari untuk jenis ini."]);
+            }
+        }
     
         $karyawan = Karyawan::where('email', Auth::user()->email)->first();
     
         if (!$karyawan) {
-            return redirect()->back()->with('error', 'Data karyawan Anda tidak ditemukan.');
+            return redirect()->back()->with('error', 'Data karyawan Anda tidak ditemukan. Hubungi HSD.');
         }
     
+        // Tentukan status otomatis berdasarkan butuh_persetujuan
+        $status = $jenisCuti && !$jenisCuti->butuh_persetujuan ? 'approved' : 'pending';
+    
         Leave::create([
-            'karyawan_id' => $karyawan->id,
-            'start_date'  => $request->start_date,
-            'end_date'    => $request->end_date,
-            'jenis_cuti'  => $request->jenis_cuti,
-            'alasan'      => $request->alasan,
-            'status'      => 'pending',
+            'karyawan_id'    => $karyawan->id,
+            'jenis_cuti_id'  => $request->jenis_cuti_id,
+            'start_date'     => $request->start_date,
+            'end_date'       => $request->end_date,
+            'alasan'         => $request->alasan,
+            'status'         => $status,
+            'approved_by'    => $status === 'approved' ? Auth::id() : null,
+            'approved_at'    => $status === 'approved' ? now() : null,
         ]);
     
-        // Redirect kembali ke form create + kirim notif sukses
-        return redirect()->route('leaves.create')
-                         ->with('success', 'Pengajuan cuti berhasil dikirim! Menunggu persetujuan dari HSD.');
+        // Pesan khusus kalau otomatis approved
+        $pesan = $status === 'approved'
+            ? 'Pengajuan cuti berhasil dan langsung disetujui (jenis cuti ini tidak memerlukan persetujuan).'
+            : 'Pengajuan cuti berhasil dikirim! Menunggu persetujuan dari HSD.';
+    
+            return redirect()->route('leaves.index')
+            ->with('success', $pesan);
     }
 
     /**
-     * Display the specified resource (opsional, kalau perlu detail cuti).
+     * Display the specified resource (opsional, detail cuti).
      */
     public function show(Leave $leave)
     {
@@ -118,11 +142,10 @@ class LeaveController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage (opsional, kalau ingin ada hapus cuti).
+     * Remove the specified resource from storage (opsional, hanya HSD/admin).
      */
     public function destroy(Leave $leave)
     {
-        // Hanya HSD atau admin yang bisa hapus (misalnya cuti salah input)
         if (!in_array(Auth::user()->role, ['hsd', 'admin'])) {
             abort(403);
         }

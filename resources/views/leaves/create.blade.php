@@ -4,6 +4,18 @@
 <h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
     AJUKAN CUTI
 </h1>
+    <!-- Tampilkan semua error validasi -->
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Ada kesalahan!</strong> Silakan periksa kembali form Anda.
+            <ul class="mb-0 mt-2">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <!-- Notifikasi Sukses -->
     @if (session('success'))
@@ -42,19 +54,24 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-
+            
             <!-- Jenis Cuti -->
             <div class="col-12">
-                <label for="jenis_cuti" class="form-label text-black">Jenis Cuti</label>
-                <select id="jenis_cuti" name="jenis_cuti" class="form-select" required>
-                    <option value="" disabled {{ old('jenis_cuti') ? '' : 'selected' }}>Pilih Jenis Cuti</option>
-                    <option value="tahunan" {{ old('jenis_cuti') == 'tahunan' ? 'selected' : '' }}>Cuti Tahunan</option>
-                    <option value="sakit" {{ old('jenis_cuti') == 'sakit' ? 'selected' : '' }}>Cuti Sakit</option>
-                    <option value="bersalin" {{ old('jenis_cuti') == 'bersalin' ? 'selected' : '' }}>Cuti Bersalin</option>
-                    <option value="penting" {{ old('jenis_cuti') == 'penting' ? 'selected' : '' }}>Cuti Penting</option>
-                    <option value="lainnya" {{ old('jenis_cuti') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+                <label for="jenis_cuti_id" class="form-label text-black">Jenis Cuti</label>
+                <select id="jenis_cuti_id" name="jenis_cuti_id" class="form-select" required>
+                    <option value="">Pilih Jenis Cuti</option>
+                    @foreach(\App\Models\JenisCuti::orderBy('kode')->get() as $jenis)  <!-- tampilkan SEMUA, urut kode -->
+                        <option value="{{ $jenis->id }}"
+                                {{ old('jenis_cuti_id') == $jenis->id ? 'selected' : '' }}
+                                {{ !$jenis->aktif ? 'disabled' : '' }}
+                                style="{{ !$jenis->aktif ? 'color: #6c757d; background-color: #f8f9fa; font-style: italic;' : '' }}">
+                            {{ $jenis->kode }} - {{ $jenis->deskripsi }}
+                            (Maks: {{ $jenis->durasi_maks ?? 'Tidak ada batas' }} hari)
+                            {{ !$jenis->aktif ? '(Nonaktif)' : '' }}
+                        </option>
+                    @endforeach
                 </select>
-                @error('jenis_cuti')
+                @error('jenis_cuti_id')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>

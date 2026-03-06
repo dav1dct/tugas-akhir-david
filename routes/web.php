@@ -74,6 +74,9 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('leaves/{leave}/status', [\App\Http\Controllers\LeaveController::class, 'updateStatus'])
          ->name('leaves.updateStatus')
          ->middleware('role:hsd');
+    
+    Route::resource('jenis-cuti', \App\Http\Controllers\JenisCutiController::class);
+
 });
 
 // ====================== ABSENSI ======================
