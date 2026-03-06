@@ -16,9 +16,9 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        $query = Leave::with('karyawan', 'approver')->latest();
-
-        // Kalau karyawan, filter berdasarkan email
+        $query = Leave::with(['karyawan', 'approver', 'jenisCuti'])->latest('start_date');
+    
+        // Filter khusus untuk karyawan biasa: hanya cuti miliknya sendiri
         if (Auth::user()->isKaryawan()) {
             $karyawan = Karyawan::where('email', Auth::user()->email)->first();
             if ($karyawan) {
@@ -29,10 +29,31 @@ class LeaveController extends Controller
                     ->with('error', 'Data karyawan Anda tidak ditemukan. Hubungi HSD.');
             }
         }
-
-        $leaves = $query->get();
-
-        return view('leaves.index', compact('leaves'));
+        // Admin, HSD, Pimpinan lihat SEMUA cuti (tidak ada filter karyawan)
+    
+        // Tambah filter dari GET query (untuk semua role)
+        if (request('jenis_cuti_id')) {
+            $query->where('jenis_cuti_id', request('jenis_cuti_id'));
+        }
+    
+        if (request('status')) {
+            $query->where('status', request('status'));
+        }
+    
+        if (request('start_date')) {
+            $query->whereDate('start_date', '>=', request('start_date'));
+        }
+    
+        if (request('end_date')) {
+            $query->whereDate('end_date', '<=', request('end_date'));
+        }
+    
+        $leaves = $query->get()->fresh();
+    
+        // Kirim semua jenis cuti untuk dropdown filter
+        $jenisCutis = JenisCuti::orderBy('kode')->get();
+    
+        return view('leaves.index', compact('leaves', 'jenisCutis'));
     }
 
     /**
@@ -104,7 +125,7 @@ class LeaveController extends Controller
             ? 'Pengajuan cuti berhasil dan langsung disetujui (jenis cuti ini tidak memerlukan persetujuan).'
             : 'Pengajuan cuti berhasil dikirim! Menunggu persetujuan dari HSD.';
     
-            return redirect()->route('leaves.index')
+            return redirect()->route('leaves.index', ['_t' => now()->timestamp])
             ->with('success', $pesan);
     }
 

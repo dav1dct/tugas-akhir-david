@@ -4,6 +4,8 @@
 <h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
     AJUKAN CUTI
 </h1>
+
+<div class="container">
     <!-- Tampilkan semua error validasi -->
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
