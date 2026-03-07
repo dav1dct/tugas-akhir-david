@@ -43,6 +43,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('dashboard');
     Route::post('/dashboard/uploadpdf', [DashboardController::class, 'uploadPDF'])->name('dashboard.upload.pdf');
 
+    // Master Data HR
+    Route::resource('departemen', \App\Http\Controllers\DepartemenController::class)->middleware('auth');
+    Route::resource('jabatan',   \App\Http\Controllers\JabatanController::class)->middleware('auth');
+
     // Karyawan Baru
     Route::prefix('karyawanbaru')->group(function () {
         Route::get('/', [KaryawanBaruController::class, 'index'])->name('karyawanbaru.index');

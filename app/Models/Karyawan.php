@@ -26,7 +26,9 @@ class Karyawan extends Model
         'status_pernikahan', 
         'no_hp',  
         'pendidikan',
-        'no_rekening',            
+        'no_rekening',      
+        'departemen_id',
+        'jabatan_id',      
     ];
 
     protected $casts = [
@@ -34,4 +36,13 @@ class Karyawan extends Model
         'tanggal_masuk' => 'date',
         'tanggal_keluar' => 'date',
     ];
+
+    public function departemen()
+    {
+        return $this->belongsTo(Departemen::class);
+    }
+    public function jabatan()
+    {
+        return $this->belongsTo(Jabatan::class);
+    }
 }

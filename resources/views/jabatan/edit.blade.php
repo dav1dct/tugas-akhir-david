@@ -1,0 +1,45 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Edit Jabatan</h1>
+
+    <form action="{{ route('jabatan.update', $jabatan) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="mb-3">
+            <label>Departemen <span class="text-danger">*</span></label>
+            <select name="departemen_id" class="form-select @error('departemen_id') is-invalid @enderror" required>
+                <option value="">-- Pilih Departemen --</option>
+                @foreach ($departemens as $d)
+                    <option value="{{ $d->id }}" {{ old('departemen_id', $jabatan->departemen_id) == $d->id ? 'selected' : '' }}>
+                        {{ $d->nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Nama Jabatan <span class="text-danger">*</span></label>
+            <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" 
+                   value="{{ old('nama', $jabatan->nama) }}" required>
+            @error('nama') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        <div class="mb-3">
+            <label>Deskripsi</label>
+            <textarea name="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $jabatan->deskripsi) }}</textarea>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="aktif" class="form-check-input" id="aktif" 
+                   {{ old('aktif', $jabatan->aktif) ? 'checked' : '' }}>
+            <label class="form-check-label" for="aktif">Aktif</label>
+        </div>
+
+        <button type="submit" class="btn btn-success">Update Jabatan</button>
+        <a href="{{ route('jabatan.index') }}" class="btn btn-secondary">Kembali</a>
+    </form>
+</div>
+@endsection
