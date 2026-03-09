@@ -39,7 +39,7 @@
                 <th>Alamat</th>
                 <th>Tanggal Lahir</th>
                 <th>Pendidikan</th>
-                <th>Posisi</th>
+                <th>Jabatan</th>
                 <th>Departemen</th>
                 <th>Status Kerja</th>
                 <th>Status Pernikahan</th>
@@ -64,8 +64,8 @@
                     <td class="text-center">{{ $k->alamat }}</td>
                     <td class="text-center">{{ \Carbon\Carbon::parse($k->tanggal_lahir)->format('d-m-Y') }}</td>
                     <td class="text-center">{{ $k->pendidikan }}</td>
-                    <td class="text-center">{{ $k->posisi }}</td>
-                    <td class="text-center">{{ $k->departemen }}</td>
+                    <td class="text-center">{{ $k->jabatan?->nama ?? '-' }}</td>
+                    <td class="text-center">{{ $k->departemen?->nama ?? '-' }}</td>
                     <td class="text-center">{{ $k->status_kerja }}</td>
                     <td class="text-center">{{ $k->status_pernikahan }}</td>
                     <td class="text-center">{{ $k->no_rekening }}</td>

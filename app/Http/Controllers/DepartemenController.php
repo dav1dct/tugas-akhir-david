@@ -9,8 +9,8 @@ class DepartemenController extends Controller
 {
     public function index()
     {
-        $departemen = Departemen::latest()->paginate(15);
-        return view('departemen.index', compact('departemen'));
+        $departemens = Departemen::latest()->paginate(15);
+        return view('departemen.index', compact('departemens'));
     }
 
     public function create()
@@ -21,11 +21,13 @@ class DepartemenController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama'      => 'required|unique:departemen,nama|max:100',
-            'kode'      => 'nullable|unique:departemen,kode|max:20',
+            'nama'      => 'required|unique:departemens,nama|max:100',
+            'kode'      => 'nullable|unique:departemens,kode|max:20',
             'deskripsi' => 'nullable',
-            'aktif'     => 'boolean'
+            'aktif'     => 'nullable|boolean'  // ← Pastikan sudah nullable
         ]);
+        
+        $validated['aktif'] = $request->has('aktif') ? true : false;  // ← Ubah jadi ini, lebih akurat
 
         Departemen::create($validated);
 
@@ -41,14 +43,16 @@ class DepartemenController extends Controller
     public function update(Request $request, Departemen $departemen)
     {
         $validated = $request->validate([
-            'nama'      => 'required|unique:departemen,nama,' . $departemen->id . '|max:100',
-            'kode'      => 'nullable|unique:departemen,kode,' . $departemen->id . '|max:20',
+            'nama'      => 'required|unique:departemens,nama,' . $departemen->id . '|max:100',
+            'kode'      => 'nullable|unique:departemens,kode,' . $departemen->id . '|max:20',
             'deskripsi' => 'nullable',
-            'aktif'     => 'boolean'
+            'aktif'     => 'nullable|boolean',
         ]);
-
-        $departemen->update($validated);
-
+    
+        $validated['aktif'] = $request->has('aktif') ? true : false;
+    
+        $departemen->update($validated); // ← ini juga kurang sebelumnya!
+    
         return redirect()->route('departemen.index')
                          ->with('success', 'Departemen berhasil diupdate!');
     }

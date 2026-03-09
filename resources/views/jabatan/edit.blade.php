@@ -3,7 +3,21 @@
 @section('content')
 <div class="container">
     <h1>Edit Jabatan</h1>
+    @if (session('success'))
+        <div class="alert alert-success mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger mb-4">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form action="{{ route('jabatan.update', $jabatan) }}" method="POST">
         @csrf
         @method('PUT')
@@ -33,8 +47,8 @@
         </div>
 
         <div class="mb-3 form-check">
-            <input type="checkbox" name="aktif" class="form-check-input" id="aktif" 
-                   {{ old('aktif', $jabatan->aktif) ? 'checked' : '' }}>
+            <input type="checkbox" name="aktif" value="1" class="form-check-input" id="aktif" 
+                {{ old('aktif', $jabatan->aktif) ? 'checked' : '' }}>
             <label class="form-check-label" for="aktif">Aktif</label>
         </div>
 

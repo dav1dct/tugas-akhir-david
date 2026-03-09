@@ -6,36 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('karyawans', function (Blueprint $table) {
             $table->id();
             $table->string('nik')->unique();
             $table->string('nama_lengkap');
+            $table->string('email')->unique();
+            $table->string('no_hp');
+            $table->string('alamat');
+            $table->date('tanggal_lahir');
+            $table->string('pendidikan');
+            $table->foreignId('departemen_id')->nullable()->constrained('departemens')->nullOnDelete();
+            $table->foreignId('jabatan_id')->nullable()->constrained('jabatans')->nullOnDelete();
             $table->enum('status_kerja', ['Tetap', 'Tidak Tetap']);
             $table->enum('status_pernikahan', ['Nikah', 'Tidak Nikah']);
-            $table->string('alamat');
-            $table->string('no_hp');
-            $table->string('email')->unique();
-            $table->string('posisi');
-            $table->string('departemen');
+            $table->string('no_rekening');
             $table->enum('status', ['Aktif', 'Tidak Aktif', 'Menunggu'])->default('Menunggu');
             $table->date('tanggal_masuk');
             $table->date('tanggal_keluar')->nullable();
-            $table->date('tanggal_lahir');
-            $table->string('pendidikan');
-            $table->string('no_rekening');    
-
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('karyawans');

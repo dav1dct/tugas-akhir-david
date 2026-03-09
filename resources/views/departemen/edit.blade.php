@@ -2,6 +2,21 @@
 
 @section('content')
 <div class="container">
+    @if (session('success'))
+        <div class="alert alert-success mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert alert-danger mb-4">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <h1>Edit Departemen</h1>
 
     <form action="{{ route('departemen.update', $departemen) }}" method="POST">
@@ -26,8 +41,8 @@
         </div>
 
         <div class="mb-3 form-check">
-            <input type="checkbox" name="aktif" class="form-check-input" id="aktif" 
-                   {{ old('aktif', $departemen->aktif) ? 'checked' : '' }}>
+            <input type="checkbox" name="aktif" value="1" class="form-check-input" id="aktif" 
+                {{ old('aktif', $departemen->aktif) ? 'checked' : '' }}>
             <label class="form-check-label" for="aktif">Aktif</label>
         </div>
 

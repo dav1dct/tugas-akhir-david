@@ -44,9 +44,24 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/uploadpdf', [DashboardController::class, 'uploadPDF'])->name('dashboard.upload.pdf');
 
     // Master Data HR
-    Route::resource('departemen', \App\Http\Controllers\DepartemenController::class)->middleware('auth');
-    Route::resource('jabatan',   \App\Http\Controllers\JabatanController::class)->middleware('auth');
+    Route::resource('departemen', \App\Http\Controllers\DepartemenController::class)
+    ->parameters(['departemen' => 'departemen'])
+    ->middleware('auth')
+    ->except(['create', 'store', 'show', 'edit', 'update']);
 
+    Route::resource('departemen', \App\Http\Controllers\DepartemenController::class)
+        ->parameters(['departemen' => 'departemen'])
+        ->only(['create', 'store', 'edit', 'update'])
+        ->middleware(['auth', 'role:hsd']);
+
+    Route::resource('jabatan', \App\Http\Controllers\JabatanController::class)
+        ->middleware('auth')
+        ->except(['create', 'store', 'show', 'edit', 'update']);
+
+    Route::resource('jabatan', \App\Http\Controllers\JabatanController::class)
+        ->only(['create', 'store', 'edit', 'update'])
+        ->middleware(['auth', 'role:hsd']);
+        
     // Karyawan Baru
     Route::prefix('karyawanbaru')->group(function () {
         Route::get('/', [KaryawanBaruController::class, 'index'])->name('karyawanbaru.index');
