@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<h1 style="font-weight: bold" class="text-white text-center mb-4 h1 bg-gray-800 p-4">TAMBAH KARYAWAN</h1>
+<h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
+    TAMBAH KARYAWAN
+</h1>
 <div class="container">
 
     @if ($errors->any())
