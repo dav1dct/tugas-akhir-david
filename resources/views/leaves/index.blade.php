@@ -96,7 +96,7 @@
                                 <td class="text-start">{{ $leave->karyawan->nama_lengkap ?? 'Tidak ditemukan' }}</td>
                                 <td>{{ \Carbon\Carbon::parse($leave->start_date)->format('d-m-Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($leave->end_date)->format('d-m-Y') }}</td>
-                                <td>{{ $leave->jenisCuti->kode ?? ucfirst($leave->jenis_cuti ?? '-') }}</td>
+                                <td>{{ $leave->jenisCuti ? $leave->jenisCuti->kode . ' - ' . $leave->jenisCuti->deskripsi : ucfirst($leave->jenis_cuti ?? '-') }}</td>
                                 <td class="text-start">{{ $leave->alasan ?? '-' }}</td>
                                 <td>
                                     <span class="badge
