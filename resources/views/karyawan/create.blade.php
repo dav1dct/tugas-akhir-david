@@ -72,8 +72,11 @@
             <select name="departemen_id" id="departemen_id" class="form-select @error('departemen_id') is-invalid @enderror" required>
                 <option value="">-- Pilih Departemen --</option>
                 @foreach ($departemens as $d)
-                    <option value="{{ $d->id }}" {{ old('departemen_id') == $d->id ? 'selected' : '' }}>
-                        {{ $d->nama }}
+                    <option value="{{ $d->id }}"
+                        {{ old('departemen_id') == $d->id ? 'selected' : '' }}
+                        {{ !$d->aktif ? 'disabled' : '' }}
+                        style="{{ !$d->aktif ? 'color: #aaa;' : '' }}">
+                        {{ $d->nama }}{{ !$d->aktif ? ' (Nonaktif)' : '' }}
                     </option>
                 @endforeach
             </select>
@@ -88,8 +91,10 @@
                 @foreach ($jabatans as $j)
                     <option value="{{ $j->id }}"
                         data-departemen="{{ $j->departemen_id }}"
-                        {{ old('jabatan_id') == $j->id ? 'selected' : '' }}>
-                        {{ $j->nama }}
+                        {{ old('jabatan_id') == $j->id ? 'selected' : '' }}
+                        {{ !$j->aktif ? 'disabled' : '' }}
+                        style="{{ !$j->aktif ? 'color: #aaa;' : '' }}">
+                        {{ $j->nama }}{{ !$j->aktif ? ' (Nonaktif)' : '' }}
                     </option>
                 @endforeach
             </select>

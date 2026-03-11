@@ -36,8 +36,8 @@
     </div>
 
     <div class="mt-4 alert alert-info">
-        <strong>Catatan:</strong> Pastikan kolom di file Excel sesuai urutan: 
-        <code>nik</code>, <code>tanggal</code>, <code>jam_masuk</code>, <code>jam_keluar</code>, <code>status</code>, <code>keterangan</code>
+        <strong>Catatan:</strong> Pastikan kolom di file Excel/CSV sesuai urutan: 
+        <code>nik</code>, <code>nama</code>, <code>date</code>, <code>check_in</code>, <code>check_out</code>
     </div>
 </div>
 @endsection

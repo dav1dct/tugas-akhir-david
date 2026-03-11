@@ -98,8 +98,8 @@ class KaryawanController extends Controller
             abort(403, 'Anda tidak memiliki akses.');
         }
 
-        $departemens = Departemen::where('aktif', true)->orderBy('nama')->get();
-        $jabatans = Jabatan::where('aktif', true)->orderBy('nama')->get();
+        $departemens = Departemen::orderBy('aktif', 'desc')->orderBy('nama')->get();
+        $jabatans = Jabatan::with('departemen')->orderBy('aktif', 'desc')->orderBy('nama')->get();
 
         return view('karyawan.create', compact('departemens', 'jabatans'));
     }
@@ -143,8 +143,8 @@ class KaryawanController extends Controller
             abort(403, 'Hanya HSD yang dapat mengedit data.');
         }
 
-        $departemens = Departemen::where('aktif', true)->orderBy('nama')->get();
-        $jabatans = Jabatan::where('aktif', true)->orderBy('nama')->get();
+        $departemens = Departemen::orderBy('aktif', 'desc')->orderBy('nama')->get();
+        $jabatans = Jabatan::with('departemen')->orderBy('aktif', 'desc')->orderBy('nama')->get();
 
         return view('karyawan.edit', compact('karyawan', 'departemens', 'jabatans'));
     }
