@@ -2,9 +2,8 @@
 
 @section('content')
 <h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
-    IMPOR DATA ABSENSI
+    IMPORT DATA ABSENSI
 </h1>
-
 <div class="container">
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -34,7 +33,6 @@
             </form>
         </div>
     </div>
-
     <div class="mt-4 alert alert-info">
         <strong>Catatan:</strong> Pastikan kolom di file Excel/CSV sesuai urutan: 
         <code>nik</code>, <code>nama</code>, <code>date</code>, <code>check_in</code>, <code>check_out</code>

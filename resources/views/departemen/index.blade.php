@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+<h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
+    DATA DEPARTEMEN
+</h1>
 <div class="container">
-    <h1 class="mb-4">Data Departemen</h1>
-
     @if (session('success'))
         <div class="alert alert-success mb-4">
             {{ session('success') }}

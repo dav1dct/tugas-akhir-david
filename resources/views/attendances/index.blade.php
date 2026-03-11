@@ -4,94 +4,102 @@
 <h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
     DAFTAR ABSENSI
 </h1>
-<div class="card mb-3">
-    <div class="card-body">
-        <form method="GET" action="{{ route('attendances.index') }}">
-            <div class="row">
+<div class="container-fluid px-4 py-4">
 
-                <div class="col-md-3">
-                    <label>NIK</label>
-                    <input type="text" name="nik" class="form-control"
-                        value="{{ request('nik') }}">
-                </div>
-
-                <div class="col-md-3">
-                    <label>Nama</label>
-                    <input type="text" name="nama" class="form-control"
-                        value="{{ request('nama') }}">
-                </div>
-
-                <div class="col-md-2">
-                    <label>Dari Tanggal</label>
-                    <input type="date" name="start_date" class="form-control"
-                        value="{{ request('start_date') }}">
-                </div>
-
-                <div class="col-md-2">
-                    <label>Sampai Tanggal</label>
-                    <input type="date" name="end_date" class="form-control"
-                        value="{{ request('end_date') }}">
-                </div>
-
-                <div class="col-md-2 d-flex align-items-end">
-                    <button class="btn btn-primary me-2">
-                        Filter
-                    </button>
-
-                    <a href="{{ route('attendances.index') }}" class="btn btn-secondary">
-                        Reset
-                    </a>
-                </div>
-
-            </div>
-        </form>
-    </div>
-</div>
-<div class="container">
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
     @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <!-- Tombol Impor (hanya HSD) -->
+    {{-- Filter --}}
+    <div class="card shadow-sm rounded-4 mb-4" style="border: 2px solid #dee2e6;">
+        <div class="card-body">
+            <form method="GET" action="{{ route('attendances.index') }}">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">NIK</label>
+                        <input type="text" name="nik" class="form-control" value="{{ request('nik') }}" placeholder="Cari NIK...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Nama</label>
+                        <input type="text" name="nama" class="form-control" value="{{ request('nama') }}" placeholder="Cari Nama...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Dari Tanggal</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Sampai Tanggal</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <button class="btn btn-primary w-100">Filter</button>
+                        <a href="{{ route('attendances.index') }}" class="btn btn-secondary w-100">Reset</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Tombol Import --}}
     @if(auth()->user()->isHsd())
-        <a href="{{ route('attendances.importForm') }}" class="btn btn-success mb-3">
-            <i class="fas fa-file-excel"></i> Impor dari Excel/CSV
-        </a>
+        <div class="mb-3">
+            <a href="{{ route('attendances.importForm') }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Impor dari Excel/CSV
+            </a>
+        </div>
     @endif
 
-    @if($attendances->isEmpty())
-        <div class="alert alert-info text-center">
-            Belum ada data absensi.
+    {{-- Tabel --}}
+    <div class="card shadow-sm rounded-4" style="border: 2px solid #dee2e6;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>NIK</th>
+                            <th>Nama Karyawan</th>
+                            <th>Tanggal</th>
+                            <th>Jam Masuk</th>
+                            <th>Jam Keluar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($attendances as $index => $absen)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $absen->nik }}</td>
+                                <td class="text-start">{{ $absen->nama }}</td>
+                                <td>{{ \Carbon\Carbon::parse($absen->date)->format('d-m-Y') }}</td>
+                                <td>
+                                    @if($absen->check_in)
+                                        <span class="badge bg-success">{{ $absen->check_in }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($absen->check_out)
+                                        <span class="badge bg-secondary">{{ $absen->check_out }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted fst-italic">
+                                    Belum ada data absensi.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-    @else
-        <table class="table table-bordered border-2" style="border: 2px solid #0d6efd;">
-            <thead class="align-middle text-center fw-bold" style="border: 2px solid #0d6efd;">
-                <tr>
-                    <th>No</th>
-                    <th>NIK</th>
-                    <th>Nama Karyawan</th>
-                    <th>Tanggal</th>
-                    <th>Jam Masuk</th>
-                    <th>Jam Keluar</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach($attendances as $index => $absen)
-            <tr>
-                <td class="text-center">{{ $index + 1 }}</td>
-                <td class="text-center">{{ $absen->nik }}</td>
-                <td>{{ $absen->nama }}</td>
-                <td class="text-center">{{ \Carbon\Carbon::parse($absen->date)->format('d-m-Y') }}</td>
-                <td class="text-center">{{ $absen->check_in ?? '-' }}</td>
-                <td class="text-center">{{ $absen->check_out ?? '-' }}</td>
-            </tr>
-            @endforeach
-            </tbody>
-        </table>
-    @endif
+    </div>
 </div>
 @endsection

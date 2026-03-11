@@ -5,59 +5,67 @@
     JENIS CUTI
 </h1>
 
-<div class="container">
+<div class="container-fluid px-4 py-4">
+
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <!-- Tombol Tambah (hanya HSD) -->
     @if(auth()->user()->isHsd())
         <div class="mb-3">
-            <a href="{{ route('jenis-cuti.create') }}" class="btn btn-primary">
-                + Tambah Jenis Cuti
-            </a>
+            <a href="{{ route('jenis-cuti.create') }}" class="btn btn-primary">+ Tambah Jenis Cuti</a>
         </div>
     @endif
 
-    <table class="table table-bordered border-2" style="border: 2px solid #0d6efd;">
-        <thead class="align-middle text-center fw-bold fs-5" style="border: 2px solid #0d6efd;">
-            <tr>
-                <th>Kode</th>
-                <th>Deskripsi</th>
-                <th>Durasi Maks (hari)</th>
-                <th>Butuh Persetujuan</th>
-                <th>Aktif</th>
-                @if(auth()->user()->isHsd())
-                    <th style="width: 1%; white-space: nowrap;">Aksi</th>
-                @endif
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($jenisCutis as $jenis)
-                <tr class="{{ !$jenis->aktif ? 'table-secondary text-muted' : '' }}">
-                    <td class="text-center">{{ $jenis->kode }}</td>
-                    <td>{{ $jenis->deskripsi }}</td>
-                    <td class="text-center">{{ $jenis->durasi_maks ?? '-' }}</td>
-                    <td class="text-center">{{ $jenis->butuh_persetujuan ? 'Ya' : 'Tidak' }}</td>
-                    <td class="text-center">
-                        <span class="badge {{ $jenis->aktif ? 'bg-success' : 'bg-secondary' }}">
-                            {{ $jenis->aktif ? 'Aktif' : 'Nonaktif' }}
-                        </span>
-                    </td>
-                    @if(auth()->user()->isHsd())
-                        <td class="text-center">
-                            <a href="{{ route('jenis-cuti.edit', $jenis) }}" class="btn btn-sm btn-warning">Edit</a>
-                        </td>
-                    @endif
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="{{ auth()->user()->isHsd() ? 6 : 5 }}" class="text-center py-4 text-muted">
-                        Belum ada jenis cuti. Klik tombol di atas untuk menambahkan.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="card shadow-sm rounded-4" style="border: 2px solid #dee2e6;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Kode</th>
+                            <th>Deskripsi</th>
+                            <th>Durasi Maks (hari)</th>
+                            <th>Butuh Persetujuan</th>
+                            <th>Status</th>
+                            @if(auth()->user()->isHsd())
+                                <th>Aksi</th>
+                            @endif
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($jenisCutis as $jenis)
+                            <tr class="{{ !$jenis->aktif ? 'table-secondary text-muted' : '' }}">
+                                <td>{{ $jenis->kode }}</td>
+                                <td class="text-start">{{ $jenis->deskripsi }}</td>
+                                <td>{{ $jenis->durasi_maks ?? '-' }}</td>
+                                <td>
+                                    <span class="badge {{ $jenis->butuh_persetujuan ? 'bg-primary' : 'bg-secondary' }}">
+                                        {{ $jenis->butuh_persetujuan ? 'Ya' : 'Tidak' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {{ $jenis->aktif ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ $jenis->aktif ? 'Aktif' : 'Nonaktif' }}
+                                    </span>
+                                </td>
+                                @if(auth()->user()->isHsd())
+                                    <td>
+                                        <a href="{{ route('jenis-cuti.edit', $jenis) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    </td>
+                                @endif
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ auth()->user()->isHsd() ? 6 : 5 }}" class="text-center py-4 text-muted fst-italic">
+                                    Belum ada jenis cuti.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

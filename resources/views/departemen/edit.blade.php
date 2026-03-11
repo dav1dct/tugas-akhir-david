@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+<h1 style="font-family: 'Inter', sans-serif; font-weight: bold;" class="text-white text-center mb-4 h1 bg-gray-800 p-4">
+    EDIT DEPARTEMEN
+</h1>
 <div class="container">
     @if (session('success'))
         <div class="alert alert-success mb-4">
@@ -17,7 +20,6 @@
             </ul>
         </div>
     @endif
-    <h1>Edit Departemen</h1>
 
     <form action="{{ route('departemen.update', $departemen) }}" method="POST">
         @csrf
