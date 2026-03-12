@@ -99,7 +99,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // ====================== ABSENSI ======================
-    Route::middleware(['role:admin,hsd,pemimpin'])->group(function () {
+    Route::middleware(['role:admin,hsd,pimpinan'])->group(function () {
 
     Route::resource('attendances', \App\Http\Controllers\AttendanceController::class)
         ->only(['index']);

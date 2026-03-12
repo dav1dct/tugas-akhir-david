@@ -14,7 +14,7 @@ class KaryawanBaruController extends Controller
 {
     public function index()
     {
-        if (!in_array(auth()->user()->role, ['admin', 'hsd'])) {
+        if (!in_array(auth()->user()->role, ['admin', 'hsd', 'pimpinan'])) {
             abort(403, 'Anda tidak memiliki akses.');
         }
 
